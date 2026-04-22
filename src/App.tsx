@@ -1,7 +1,5 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-
+import { useState, useEffect } from "react";
 /* ─────────────────────────── DATA ─────────────────────────── */
-
 const EXPERIENCE = [
   {
     title: "Senior Software Engineer",
@@ -37,7 +35,6 @@ const EXPERIENCE = [
     stack: ["Python", "Qt", "Mathematical Modeling"],
   },
 ];
-
 const SKILLS = [
   {
     label: "Backend Engineering",
@@ -56,15 +53,12 @@ const SKILLS = [
     items: ["Qt", "Dashboard Design", "Data Visualization", "Drupal"],
   },
 ];
-
 const STATS = [
   { value: "5+", label: "Years of Experience" },
-  { value: "30%", label: "System Efficiency Gain" },
+  { value: "30%", label: "Efficiency Gain" },
   { value: "40%", label: "Latency Reduction" },
 ];
-
 /* ─────────────────────────── STYLES ─────────────────────────── */
-
 const C = {
   bg: "#080809",
   surface: "#0f0f11",
@@ -77,13 +71,11 @@ const C = {
   accent: "#e8e8e8",
   accentDim: "rgba(232,232,232,0.12)",
 };
-
 const font = {
   heading: "'Syne', sans-serif",
   body: "'Inter', sans-serif",
   mono: "'Space Mono', monospace",
 };
-
 const css = `
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -91,7 +83,6 @@ const css = `
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: ${C.bg}; }
   ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 2px; }
-
   @keyframes fadeUp {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -108,11 +99,6 @@ const css = `
     0%, 100% { opacity: 1; transform: scale(1); }
     50% { opacity: 0.4; transform: scale(0.7); }
   }
-  @keyframes shimmer {
-    0% { background-position: -200% center; }
-    100% { background-position: 200% center; }
-  }
-
   .nav-link {
     background: none; border: none; cursor: pointer;
     font-family: ${font.body}; font-size: 0.72rem; font-weight: 500;
@@ -128,7 +114,6 @@ const css = `
   .nav-link:hover { color: ${C.text}; }
   .nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
   .nav-link.active { color: ${C.text}; }
-
   .tag {
     display: inline-block;
     font-family: ${font.mono}; font-size: 0.68rem; font-weight: 400;
@@ -137,7 +122,6 @@ const css = `
     transition: border-color 0.2s, color 0.2s;
   }
   .tag:hover { border-color: ${C.borderHover}; color: ${C.text}; }
-
   .exp-card {
     border: 1px solid ${C.border};
     transition: border-color 0.3s, background 0.3s;
@@ -145,7 +129,6 @@ const css = `
   }
   .exp-card:hover { border-color: ${C.borderHover}; background: ${C.surfaceHover}; }
   .exp-card.open { border-color: rgba(255,255,255,0.13); }
-
   .skill-row {
     border-bottom: 1px solid ${C.border};
     transition: background 0.2s;
@@ -153,14 +136,12 @@ const css = `
   }
   .skill-row:first-child { border-top: 1px solid ${C.border}; }
   .skill-row:hover { background: ${C.surfaceHover}; }
-
   .contact-item {
     border: 1px solid ${C.border};
     transition: border-color 0.25s, background 0.25s;
     padding: 1.5rem;
   }
   .contact-item:hover { border-color: ${C.borderHover}; background: ${C.surfaceHover}; }
-
   .dl-btn {
     display: inline-flex; align-items: center; gap: 10px;
     font-family: ${font.body}; font-size: 0.78rem; font-weight: 500;
@@ -172,23 +153,6 @@ const css = `
   }
   .dl-btn:hover { opacity: 0.88; transform: translateY(-1px); }
   .dl-btn:active { transform: translateY(0); }
-
-  .photo-upload {
-    position: relative; cursor: pointer;
-    width: 100%; aspect-ratio: 3/4;
-    overflow: hidden; background: ${C.surface};
-    border: 1px solid ${C.border};
-  }
-  .photo-upload:hover .photo-overlay { opacity: 1; }
-  .photo-overlay {
-    position: absolute; inset: 0; background: rgba(8,8,9,0.7);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 8px;
-    opacity: 0; transition: opacity 0.25s;
-    font-family: ${font.body}; font-size: 0.72rem; font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase; color: ${C.text};
-  }
-
   .copy-btn {
     background: none; border: none; cursor: pointer;
     display: flex; align-items: center; gap: 8px;
@@ -197,12 +161,10 @@ const css = `
     padding: 0;
   }
   .copy-btn:hover { color: ${C.text}; }
-
   @media (max-width: 768px) {
     .desktop-nav { display: none !important; }
     .hamburger { display: flex !important; }
     .hero-grid { grid-template-columns: 1fr !important; }
-    .skills-grid { grid-template-columns: 1fr !important; }
     .stats-row { flex-direction: column; gap: 2rem !important; }
     .contact-grid { grid-template-columns: 1fr !important; }
   }
@@ -211,36 +173,22 @@ const css = `
     .mobile-menu { display: none !important; }
   }
 `;
-
 /* ─────────────────────────── COMPONENT ─────────────────────────── */
-
 export default function App() {
-  const [photo, setPhoto] = useState<string | null>(null);
   const [activeSection, setActiveSection] = useState("About");
   const [menuOpen, setMenuOpen] = useState(false);
   const [openExp, setOpenExp] = useState<number>(0);
   const [copied, setCopied] = useState(false);
-  const photoInputRef = useRef<HTMLInputElement>(null);
-
-  const handlePhotoChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhoto(URL.createObjectURL(file));
-  }, []);
-
   const copyEmail = () => {
     navigator.clipboard.writeText("v.ashaev@yandex.com");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
   const scrollTo = (id: string) => {
     document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
     setActiveSection(id);
     setMenuOpen(false);
   };
-
-  // Intersection observer for active nav
   useEffect(() => {
     const sections = ["about", "experience", "skills", "contact"];
     const observer = new IntersectionObserver(
@@ -260,11 +208,9 @@ export default function App() {
     });
     return () => observer.disconnect();
   }, []);
-
   return (
     <>
       <style>{css}</style>
-
       {/* ── NAVBAR ── */}
       <nav
         style={{
@@ -276,7 +222,7 @@ export default function App() {
           borderBottom: `1px solid ${C.border}`,
           backdropFilter: "blur(24px)",
           WebkitBackdropFilter: "blur(24px)",
-          background: "rgba(8,8,9,0.82)",
+          background: "rgba(8,8,9,0.85)",
         }}
       >
         <div
@@ -301,7 +247,6 @@ export default function App() {
           >
             Ilya Ashaev
           </span>
-
           <div className="desktop-nav" style={{ display: "flex", gap: "2.8rem" }}>
             {["About", "Experience", "Skills", "Contact"].map((link) => (
               <button
@@ -313,8 +258,7 @@ export default function App() {
               </button>
             ))}
           </div>
-
-          {/* Download CV – always visible in nav */}
+          {/* Download CV */}
           <a
             href="/cv.pdf"
             download="Ilya_Ashaev_CV.pdf"
@@ -343,7 +287,6 @@ export default function App() {
           >
             ↓ CV
           </a>
-
           {/* Hamburger */}
           <button
             className="hamburger"
@@ -378,7 +321,6 @@ export default function App() {
             ))}
           </button>
         </div>
-
         {/* Mobile menu */}
         {menuOpen && (
           <div
@@ -419,7 +361,6 @@ export default function App() {
           </div>
         )}
       </nav>
-
       {/* ── HERO / ABOUT ── */}
       <section
         id="about"
@@ -432,16 +373,13 @@ export default function App() {
           overflow: "hidden",
         }}
       >
-        {/* Subtle background grid */}
+        {/* Dot-grid background */}
         <div
           style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: `
-              linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)
-            `,
-            backgroundSize: "80px 80px",
+            backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)`,
+            backgroundSize: "40px 40px",
             pointerEvents: "none",
           }}
         />
@@ -450,17 +388,15 @@ export default function App() {
           style={{
             position: "absolute",
             inset: 0,
-            background:
-              "radial-gradient(ellipse 70% 60% at 30% 50%, rgba(255,255,255,0.018) 0%, transparent 70%)",
+            background: `radial-gradient(ellipse 80% 60% at 50% 50%, transparent 40%, ${C.bg} 100%)`,
             pointerEvents: "none",
           }}
         />
-
         <div
           style={{
             maxWidth: 1200,
             margin: "0 auto",
-            padding: "6rem 2.5rem 6rem",
+            padding: "5rem 2.5rem",
             width: "100%",
             position: "relative",
             zIndex: 1,
@@ -470,377 +406,343 @@ export default function App() {
             className="hero-grid"
             style={{
               display: "grid",
-              gridTemplateColumns: "1fr 340px",
-              gap: "6rem",
+              gridTemplateColumns: "1fr 320px",
+              gap: "5rem",
               alignItems: "center",
             }}
           >
-            {/* Left — Text */}
+            {/* LEFT — Text */}
             <div style={{ animation: "fadeUp 0.8s ease both" }}>
-              {/* Availability badge */}
-              <div
+              {/* Section number */}
+              <p
                 style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
                   fontFamily: font.mono,
-                  fontSize: "0.68rem",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
+                  fontSize: "0.7rem",
+                  letterSpacing: "0.18em",
                   color: C.muted,
-                  marginBottom: "2.5rem",
-                  border: `1px solid ${C.border}`,
-                  padding: "6px 14px",
+                  marginBottom: "1.8rem",
+                  textTransform: "uppercase",
                 }}
               >
-                <span
-                  style={{
-                    width: 6,
-                    height: 6,
-                    borderRadius: "50%",
-                    background: "#6ee7b7",
-                    display: "inline-block",
-                    animation: "pulse-dot 2s ease-in-out infinite",
-                  }}
-                />
-                Available for hire
-              </div>
-
-              {/* Name */}
+                01 — Profile
+              </p>
               <h1
                 style={{
                   fontFamily: font.heading,
+                  fontSize: "clamp(2.6rem, 6vw, 4.5rem)",
                   fontWeight: 800,
-                  fontSize: "clamp(3rem, 6vw, 5.5rem)",
-                  lineHeight: 0.95,
+                  lineHeight: 1.05,
                   letterSpacing: "-0.02em",
+                  marginBottom: "1rem",
                   color: C.text,
-                  marginBottom: "1.2rem",
                 }}
               >
                 Ilya
                 <br />
                 Ashaev
               </h1>
-
-              {/* Title line */}
+              {/* Animated underline */}
               <div
                 style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 14,
-                  marginBottom: "2rem",
+                  height: 1,
+                  background: `linear-gradient(90deg, ${C.text}, transparent)`,
+                  marginBottom: "1.8rem",
+                  animation: "lineGrow 1s ease 0.4s both",
+                  transformOrigin: "left",
+                  width: "60%",
                 }}
-              >
-                <div style={{ height: 1, width: 40, background: C.muted }} />
-                <span
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.78rem",
-                    letterSpacing: "0.1em",
-                    textTransform: "uppercase",
-                    color: C.muted,
-                  }}
-                >
-                  Senior Software Engineer
-                </span>
-              </div>
-
-              {/* Summary */}
+              />
               <p
                 style={{
                   fontFamily: font.body,
                   fontSize: "1.05rem",
+                  fontWeight: 500,
+                  letterSpacing: "0.01em",
+                  color: C.accent,
+                  marginBottom: "1.4rem",
+                }}
+              >
+                Senior Software Engineer
+              </p>
+              <p
+                style={{
+                  fontFamily: font.body,
+                  fontSize: "0.95rem",
                   lineHeight: 1.75,
-                  color: "rgba(240,238,235,0.65)",
+                  color: C.muted,
                   maxWidth: 560,
                   marginBottom: "2.5rem",
-                  fontWeight: 300,
                 }}
               >
                 5+ years of experience automating business processes, data engineering,
                 and full-stack system integration. Specializes in scalable solutions
-                using Golang, Python, R, and modern DevOps tooling.
+                using Golang, Python, R, and DevOps tooling. Adept at machine learning
+                and dashboard visualization. Proven track record in international teams
+                with end-to-end project ownership.
               </p>
-
-              {/* Stats */}
-              <div
-                className="stats-row"
-                style={{
-                  display: "flex",
-                  gap: "3rem",
-                  marginBottom: "3rem",
-                  paddingTop: "2rem",
-                  borderTop: `1px solid ${C.border}`,
-                }}
-              >
-                {STATS.map((s) => (
-                  <div key={s.label}>
-                    <div
-                      style={{
-                        fontFamily: font.heading,
-                        fontWeight: 700,
-                        fontSize: "2.2rem",
-                        color: C.text,
-                        lineHeight: 1,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {s.value}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: font.body,
-                        fontSize: "0.72rem",
-                        color: C.muted,
-                        letterSpacing: "0.06em",
-                        textTransform: "uppercase",
-                        fontWeight: 400,
-                      }}
-                    >
-                      {s.label}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Contractor note */}
+              {/* Contractor badge */}
               <div
                 style={{
                   display: "inline-flex",
-                  gap: 12,
-                  padding: "14px 20px",
+                  alignItems: "flex-start",
+                  gap: "1rem",
                   border: `1px solid ${C.border}`,
-                  background: C.surface,
+                  padding: "1rem 1.25rem",
+                  marginBottom: "2.8rem",
                   maxWidth: 520,
                 }}
               >
-                <span style={{ fontSize: "1rem", marginTop: 1 }}>🏢</span>
+                <div
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: C.text,
+                    marginTop: 6,
+                    flexShrink: 0,
+                    animation: "pulse-dot 2.5s ease-in-out infinite",
+                  }}
+                />
                 <p
                   style={{
                     fontFamily: font.body,
-                    fontSize: "0.8rem",
+                    fontSize: "0.82rem",
                     lineHeight: 1.65,
                     color: C.muted,
-                    fontWeight: 300,
                   }}
                 >
-                  <strong style={{ color: C.text, fontWeight: 500 }}>Contractor option:</strong>{" "}
-                  Available for direct hire or through an Armenia-registered organization —
-                  simplifying international contracts and payments.
+                  <span style={{ color: C.text, fontWeight: 600 }}>
+                    Open to contracts.
+                  </span>{" "}
+                  Available for hire directly or through an Armenia-registered
+                  organization — simplifying international contracts and payments.
                 </p>
               </div>
-            </div>
-
-            {/* Right — Photo */}
-            <div style={{ animation: "fadeIn 1s ease 0.3s both" }}>
+              {/* Stats */}
               <div
-                className="photo-upload"
-                onClick={() => photoInputRef.current?.click()}
-                title="Click to upload your photo"
+                className="stats-row"
+                style={{ display: "flex", gap: "3rem" }}
               >
-                {photo ? (
-                  <img
-                    src={photo}
-                    alt="Ilya Ashaev"
-                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  />
-                ) : (
-                  <div
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 12,
-                      background: C.surface,
-                      minHeight: 420,
-                    }}
-                  >
-                    {/* Placeholder silhouette */}
-                    <svg
-                      width="72"
-                      height="72"
-                      viewBox="0 0 72 72"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
+                {STATS.map((s) => (
+                  <div key={s.label}>
+                    <p
+                      style={{
+                        fontFamily: font.heading,
+                        fontSize: "2rem",
+                        fontWeight: 800,
+                        color: C.text,
+                        letterSpacing: "-0.02em",
+                        lineHeight: 1,
+                        marginBottom: "0.35rem",
+                      }}
                     >
-                      <circle cx="36" cy="28" r="16" fill="rgba(255,255,255,0.08)" />
-                      <ellipse cx="36" cy="64" rx="26" ry="18" fill="rgba(255,255,255,0.06)" />
-                    </svg>
-                    <span
+                      {s.value}
+                    </p>
+                    <p
                       style={{
                         fontFamily: font.mono,
                         fontSize: "0.65rem",
                         letterSpacing: "0.1em",
                         textTransform: "uppercase",
-                        color: C.faint,
-                      }}
-                    >
-                      Add Photo
-                    </span>
-                  </div>
-                )}
-                <div className="photo-overlay">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path
-                      d="M10 2v16M2 10h16"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                  <span>{photo ? "Replace photo" : "Upload photo"}</span>
-                </div>
-              </div>
-              <input
-                ref={photoInputRef}
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                style={{ display: "none" }}
-              />
-
-              {/* Location & languages below photo */}
-              <div
-                style={{
-                  marginTop: 1,
-                  padding: "14px 16px",
-                  background: C.surface,
-                  border: `1px solid ${C.border}`,
-                  borderTop: "none",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <span
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.68rem",
-                    color: C.muted,
-                    letterSpacing: "0.06em",
-                  }}
-                >
-                  📍 Armenia
-                </span>
-                <div style={{ display: "flex", gap: 8 }}>
-                  {["EN", "RU"].map((lang) => (
-                    <span
-                      key={lang}
-                      style={{
-                        fontFamily: font.mono,
-                        fontSize: "0.62rem",
-                        letterSpacing: "0.1em",
-                        border: `1px solid ${C.border}`,
-                        padding: "3px 8px",
                         color: C.muted,
                       }}
                     >
-                      {lang}
-                    </span>
-                  ))}
-                </div>
+                      {s.label}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* RIGHT — Photo */}
+            <div
+              style={{
+                animation: "fadeIn 1s ease 0.3s both",
+                position: "relative",
+              }}
+            >
+              {/* Offset decorative frame */}
+              <div
+                style={{
+                  position: "absolute",
+                  top: 16,
+                  left: 16,
+                  right: -16,
+                  bottom: -16,
+                  border: `1px solid ${C.border}`,
+                  pointerEvents: "none",
+                  zIndex: 0,
+                }}
+              />
+              {/* Photo frame */}
+              <div
+                style={{
+                  position: "relative",
+                  zIndex: 1,
+                  width: "100%",
+                  aspectRatio: "3/4",
+                  overflow: "hidden",
+                  border: `1px solid ${C.border}`,
+                  background: C.surface,
+                }}
+              >
+                <img
+                  src="/photo.jpg"
+                  alt="Ilya Ashaev"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center top",
+                    display: "block",
+                  }}
+                />
               </div>
             </div>
           </div>
         </div>
       </section>
-
       {/* ── EXPERIENCE ── */}
-      <section id="experience" style={{ padding: "8rem 0", borderTop: `1px solid ${C.border}` }}>
+      <section
+        id="experience"
+        style={{
+          padding: "7rem 0",
+          borderTop: `1px solid ${C.border}`,
+        }}
+      >
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
-          <SectionHeader index="01" title="Experience" />
-
-          <div style={{ marginTop: "4rem", display: "flex", flexDirection: "column", gap: "1px" }}>
+          {/* Header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: "1.5rem",
+              marginBottom: "3.5rem",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: font.mono,
+                fontSize: "0.7rem",
+                letterSpacing: "0.18em",
+                color: C.muted,
+                textTransform: "uppercase",
+              }}
+            >
+              02
+            </p>
+            <h2
+              style={{
+                fontFamily: font.heading,
+                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontWeight: 800,
+                color: C.text,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Experience
+            </h2>
+          </div>
+          {/* Cards */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             {EXPERIENCE.map((exp, i) => (
               <div
                 key={i}
                 className={`exp-card ${openExp === i ? "open" : ""}`}
-                style={{ background: openExp === i ? C.surfaceHover : "transparent" }}
                 onClick={() => setOpenExp(openExp === i ? -1 : i)}
               >
                 {/* Card header */}
                 <div
                   style={{
-                    padding: "1.8rem 2rem",
                     display: "flex",
-                    alignItems: "center",
                     justifyContent: "space-between",
+                    alignItems: "center",
+                    padding: "1.4rem 1.6rem",
                     gap: "1rem",
                   }}
                 >
-                  <div style={{ flex: 1 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "1.2rem" }}>
+                    {/* Dot indicator */}
                     <div
                       style={{
-                        display: "flex",
-                        alignItems: "baseline",
-                        gap: "1rem",
-                        flexWrap: "wrap",
-                        marginBottom: 6,
+                        width: 6,
+                        height: 6,
+                        borderRadius: "50%",
+                        background: openExp === i ? C.text : C.faint,
+                        flexShrink: 0,
+                        transition: "background 0.3s",
                       }}
-                    >
-                      <span
+                    />
+                    <div>
+                      <p
                         style={{
                           fontFamily: font.heading,
-                          fontWeight: 600,
-                          fontSize: "1.15rem",
+                          fontSize: "1.05rem",
+                          fontWeight: 700,
                           color: C.text,
+                          letterSpacing: "-0.01em",
                         }}
                       >
                         {exp.title}
-                      </span>
-                      <span
+                      </p>
+                      <p
                         style={{
-                          fontFamily: font.body,
-                          fontSize: "0.85rem",
+                          fontFamily: font.mono,
+                          fontSize: "0.7rem",
                           color: C.muted,
-                          fontWeight: 300,
+                          letterSpacing: "0.06em",
+                          marginTop: "0.2rem",
                         }}
                       >
-                        @ {exp.company}
-                      </span>
+                        {exp.company}
+                      </p>
                     </div>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "2rem",
+                      flexShrink: 0,
+                    }}
+                  >
                     <span
                       style={{
                         fontFamily: font.mono,
                         fontSize: "0.68rem",
-                        color: C.faint,
-                        letterSpacing: "0.08em",
+                        color: C.muted,
+                        letterSpacing: "0.06em",
                       }}
                     >
                       {exp.period}
                     </span>
+                    <span
+                      style={{
+                        fontFamily: font.body,
+                        fontSize: "1.2rem",
+                        color: C.muted,
+                        transition: "transform 0.3s",
+                        display: "inline-block",
+                        transform: openExp === i ? "rotate(45deg)" : "none",
+                      }}
+                    >
+                      +
+                    </span>
                   </div>
-                  <span
-                    style={{
-                      fontFamily: font.mono,
-                      fontSize: "1.2rem",
-                      color: C.muted,
-                      transition: "transform 0.3s",
-                      transform: openExp === i ? "rotate(45deg)" : "none",
-                      flexShrink: 0,
-                    }}
-                  >
-                    +
-                  </span>
                 </div>
-
                 {/* Expanded body */}
                 {openExp === i && (
                   <div
                     style={{
-                      padding: "0 2rem 2rem",
-                      animation: "fadeUp 0.3s ease",
+                      padding: "0 1.6rem 1.8rem 3.4rem",
+                      animation: "fadeUp 0.3s ease both",
                     }}
                   >
                     <div
                       style={{
+                        width: "100%",
                         height: 1,
                         background: C.border,
-                        marginBottom: "1.5rem",
+                        marginBottom: "1.4rem",
                       }}
                     />
                     <ul
@@ -848,7 +750,7 @@ export default function App() {
                         listStyle: "none",
                         display: "flex",
                         flexDirection: "column",
-                        gap: "0.8rem",
+                        gap: "0.75rem",
                         marginBottom: "1.5rem",
                       }}
                     >
@@ -856,21 +758,19 @@ export default function App() {
                         <li
                           key={j}
                           style={{
-                            display: "flex",
-                            gap: 14,
                             fontFamily: font.body,
-                            fontSize: "0.88rem",
+                            fontSize: "0.9rem",
                             lineHeight: 1.7,
-                            color: "rgba(240,238,235,0.6)",
-                            fontWeight: 300,
+                            color: C.muted,
+                            paddingLeft: "1rem",
+                            borderLeft: `1px solid ${C.border}`,
                           }}
                         >
-                          <span style={{ color: C.faint, flexShrink: 0, marginTop: 2 }}>—</span>
                           {b}
                         </li>
                       ))}
                     </ul>
-                    <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
                       {exp.stack.map((t) => (
                         <span key={t} className="tag">
                           {t}
@@ -884,239 +784,246 @@ export default function App() {
           </div>
         </div>
       </section>
-
       {/* ── SKILLS ── */}
-      <section id="skills" style={{ padding: "8rem 0", borderTop: `1px solid ${C.border}` }}>
+      <section
+        id="skills"
+        style={{
+          padding: "7rem 0",
+          borderTop: `1px solid ${C.border}`,
+        }}
+      >
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
-          <SectionHeader index="02" title="Skills" />
-
-          <div style={{ marginTop: "4rem" }}>
-            {SKILLS.map((s, i) => (
-              <div key={i} className="skill-row" style={{ paddingLeft: 0, paddingRight: 0 }}>
-                <div
+          {/* Header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: "1.5rem",
+              marginBottom: "3.5rem",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: font.mono,
+                fontSize: "0.7rem",
+                letterSpacing: "0.18em",
+                color: C.muted,
+                textTransform: "uppercase",
+              }}
+            >
+              03
+            </p>
+            <h2
+              style={{
+                fontFamily: font.heading,
+                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontWeight: 800,
+                color: C.text,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Skills
+            </h2>
+          </div>
+          {/* Skill rows */}
+          <div>
+            {SKILLS.map((group) => (
+              <div
+                key={group.label}
+                className="skill-row"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "220px 1fr",
+                  gap: "2rem",
+                  alignItems: "center",
+                  paddingLeft: "0.5rem",
+                  paddingRight: "0.5rem",
+                }}
+              >
+                <p
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "260px 1fr",
-                    gap: "2rem",
-                    alignItems: "start",
-                    padding: "0 0.25rem",
+                    fontFamily: font.heading,
+                    fontSize: "0.95rem",
+                    fontWeight: 700,
+                    color: C.text,
+                    letterSpacing: "-0.01em",
                   }}
                 >
-                  <span
-                    style={{
-                      fontFamily: font.heading,
-                      fontWeight: 600,
-                      fontSize: "0.95rem",
-                      color: C.text,
-                      letterSpacing: "-0.01em",
-                    }}
-                  >
-                    {s.label}
-                  </span>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: 8, paddingTop: 2 }}>
-                    {s.items.map((item) => (
-                      <span key={item} className="tag">
-                        {item}
-                      </span>
-                    ))}
-                  </div>
+                  {group.label}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+                  {group.items.map((item) => (
+                    <span key={item} className="tag">
+                      {item}
+                    </span>
+                  ))}
                 </div>
               </div>
             ))}
           </div>
         </div>
       </section>
-
       {/* ── CONTACT ── */}
-      <section id="contact" style={{ padding: "8rem 0", borderTop: `1px solid ${C.border}` }}>
+      <section
+        id="contact"
+        style={{
+          padding: "7rem 0 10rem",
+          borderTop: `1px solid ${C.border}`,
+        }}
+      >
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 2.5rem" }}>
-          <SectionHeader index="03" title="Contact" />
-
+          {/* Header */}
           <div
             style={{
-              marginTop: "4rem",
+              display: "flex",
+              alignItems: "baseline",
+              gap: "1.5rem",
+              marginBottom: "3.5rem",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: font.mono,
+                fontSize: "0.7rem",
+                letterSpacing: "0.18em",
+                color: C.muted,
+                textTransform: "uppercase",
+              }}
+            >
+              04
+            </p>
+            <h2
+              style={{
+                fontFamily: font.heading,
+                fontSize: "clamp(1.6rem, 3vw, 2.2rem)",
+                fontWeight: 800,
+                color: C.text,
+                letterSpacing: "-0.02em",
+              }}
+            >
+              Contact
+            </h2>
+          </div>
+          <div
+            className="contact-grid"
+            style={{
               display: "grid",
               gridTemplateColumns: "1fr 1fr",
-              gap: "3rem",
-              alignItems: "start",
+              gap: "1rem",
+              marginBottom: "3rem",
             }}
-            className="contact-grid"
           >
-            {/* Left — CTA */}
-            <div>
-              <h2
-                style={{
-                  fontFamily: font.heading,
-                  fontWeight: 700,
-                  fontSize: "clamp(2rem, 4vw, 3rem)",
-                  lineHeight: 1.1,
-                  color: C.text,
-                  letterSpacing: "-0.02em",
-                  marginBottom: "1.2rem",
-                }}
-              >
-                Let's build
-                <br />
-                something great.
-              </h2>
+            {/* Email */}
+            <div className="contact-item">
               <p
                 style={{
-                  fontFamily: font.body,
-                  fontSize: "0.95rem",
-                  lineHeight: 1.75,
+                  fontFamily: font.mono,
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
                   color: C.muted,
-                  fontWeight: 300,
-                  maxWidth: 400,
-                  marginBottom: "2.5rem",
+                  marginBottom: "0.75rem",
                 }}
               >
-                Open to full-time roles, contract projects, and consulting.
-                Reach out — I respond within 24 hours.
+                Email
               </p>
-
-              <a
-                href="/cv.pdf"
-                download="Ilya_Ashaev_CV.pdf"
-                className="dl-btn"
-              >
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                  <path
-                    d="M7 1v8M3 9l4 4 4-4M1 13h12"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                Download CV
-              </a>
-            </div>
-
-            {/* Right — Contact items */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
-              {/* Email */}
-              <div className="contact-item">
-                <div
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: C.faint,
-                    marginBottom: 10,
-                  }}
-                >
-                  Email
-                </div>
-                <button className="copy-btn" onClick={copyEmail}>
-                  <span>v.ashaev@yandex.com</span>
-                  <span style={{ fontSize: "0.7rem", color: C.faint }}>
-                    {copied ? "✓ Copied" : "Copy"}
-                  </span>
-                </button>
-              </div>
-
-              {/* LinkedIn */}
-              <div className="contact-item">
-                <div
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: C.faint,
-                    marginBottom: 10,
-                  }}
-                >
-                  LinkedIn
-                </div>
-                <a
-                  href="https://linkedin.com/in/ilyaashaev1998"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.82rem",
-                    color: C.muted,
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = C.text)
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = C.muted)
-                  }
-                >
-                  linkedin.com/in/ilyaashaev1998 →
-                </a>
-              </div>
-
-              {/* Location */}
-              <div className="contact-item">
-                <div
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: C.faint,
-                    marginBottom: 10,
-                  }}
-                >
-                  Location
-                </div>
-                <span
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.82rem",
-                    color: C.muted,
-                  }}
-                >
-                  Armenia — Remote Worldwide
+              <button className="copy-btn" onClick={copyEmail}>
+                <span>v.ashaev@yandex.com</span>
+                <span style={{ fontSize: "0.7rem", opacity: 0.5 }}>
+                  {copied ? "✓ Copied" : "⎘"}
                 </span>
-              </div>
-
-              {/* GitHub */}
-              <div className="contact-item">
-                <div
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.62rem",
-                    letterSpacing: "0.12em",
-                    textTransform: "uppercase",
-                    color: C.faint,
-                    marginBottom: 10,
-                  }}
-                >
-                  GitHub
-                </div>
-                <a
-                  href="https://github.com/Ashaev-Tech-lab"
-                  target="_blank"
-                  rel="noreferrer"
-                  style={{
-                    fontFamily: font.mono,
-                    fontSize: "0.82rem",
-                    color: C.muted,
-                    textDecoration: "none",
-                    transition: "color 0.2s",
-                  }}
-                  onMouseEnter={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = C.text)
-                  }
-                  onMouseLeave={(e) =>
-                    ((e.currentTarget as HTMLAnchorElement).style.color = C.muted)
-                  }
-                >
-                  github.com/Ashaev-Tech-lab →
-                </a>
-              </div>
+              </button>
+            </div>
+            {/* LinkedIn */}
+            <a
+              href="https://linkedin.com/in/ilyaashaev1998"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-item"
+              style={{ textDecoration: "none", display: "block" }}
+            >
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: C.muted,
+                  marginBottom: "0.75rem",
+                }}
+              >
+                LinkedIn
+              </p>
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.82rem",
+                  color: C.text,
+                }}
+              >
+                linkedin.com/in/ilyaashaev1998
+              </p>
+            </a>
+            {/* Location */}
+            <div className="contact-item">
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: C.muted,
+                  marginBottom: "0.75rem",
+                }}
+              >
+                Location
+              </p>
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.82rem",
+                  color: C.text,
+                }}
+              >
+                Armenia — Remote worldwide
+              </p>
+            </div>
+            {/* Languages */}
+            <div className="contact-item">
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: C.muted,
+                  marginBottom: "0.75rem",
+                }}
+              >
+                Languages
+              </p>
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.82rem",
+                  color: C.text,
+                }}
+              >
+                English — Intermediate &nbsp;·&nbsp; Russian — Native
+              </p>
             </div>
           </div>
+          {/* CV Download */}
+          <a
+            href="/cv.pdf"
+            download="Ilya_Ashaev_CV.pdf"
+            className="dl-btn"
+          >
+            <span>↓</span>
+            <span>Download CV</span>
+          </a>
         </div>
       </section>
-
       {/* ── FOOTER ── */}
       <footer
         style={{
@@ -1129,66 +1036,36 @@ export default function App() {
             maxWidth: 1200,
             margin: "0 auto",
             display: "flex",
-            alignItems: "center",
             justifyContent: "space-between",
+            alignItems: "center",
             flexWrap: "wrap",
             gap: "1rem",
           }}
         >
           <span
             style={{
-              fontFamily: font.heading,
-              fontWeight: 700,
-              fontSize: "0.9rem",
+              fontFamily: font.mono,
+              fontSize: "0.68rem",
+              letterSpacing: "0.1em",
               color: C.faint,
-              letterSpacing: "0.02em",
+              textTransform: "uppercase",
             }}
           >
-            Ilya Ashaev
+            © {new Date().getFullYear()} Ilya Ashaev
           </span>
           <span
             style={{
               fontFamily: font.mono,
-              fontSize: "0.65rem",
+              fontSize: "0.68rem",
+              letterSpacing: "0.1em",
               color: C.faint,
-              letterSpacing: "0.08em",
+              textTransform: "uppercase",
             }}
           >
-            © {new Date().getFullYear()} — Senior Software Engineer
+            Ashaev-Tech-Lab
           </span>
         </div>
       </footer>
     </>
-  );
-}
-
-/* ─────────────────────────── SECTION HEADER ─────────────────────────── */
-
-function SectionHeader({ index, title }: { index: string; title: string }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
-      <span
-        style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: "0.68rem",
-          letterSpacing: "0.1em",
-          color: "rgba(240,238,235,0.25)",
-        }}
-      >
-        {index}
-      </span>
-      <div style={{ height: 1, width: 48, background: "rgba(240,238,235,0.15)" }} />
-      <h2
-        style={{
-          fontFamily: "'Syne', sans-serif",
-          fontWeight: 700,
-          fontSize: "clamp(1.6rem, 3vw, 2.4rem)",
-          letterSpacing: "-0.02em",
-          color: "rgba(240,238,235,0.92)",
-        }}
-      >
-        {title}
-      </h2>
-    </div>
   );
 }
