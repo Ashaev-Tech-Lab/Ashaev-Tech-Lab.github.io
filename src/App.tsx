@@ -179,6 +179,8 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openExp, setOpenExp] = useState<number>(0);
   const [copied, setCopied] = useState(false);
+  const [currentPhoto, setCurrentPhoto] = useState(0);
+  const photos = ['/photo.jpg', '/photo2.jpg'];
   const copyEmail = () => {
     navigator.clipboard.writeText("v.ashaev@yandex.com");
     setCopied(true);
@@ -245,7 +247,7 @@ export default function App() {
               color: C.text,
             }}
           >
-            Ilya Ashaev
+            Ashaev Tech Lab
           </span>
           <div className="desktop-nav" style={{ display: "flex", gap: "2.8rem" }}>
             {["About", "Experience", "Skills", "Contact"].map((link) => (
@@ -586,7 +588,7 @@ export default function App() {
                 }}
               >
                 <img
-                  src="/photo.jpg"
+                  src={photos[currentPhoto]}
                   alt="Ilya Ashaev"
                   style={{
                     width: "100%",
@@ -594,8 +596,34 @@ export default function App() {
                     objectFit: "cover",
                     objectPosition: "center top",
                     display: "block",
+                    cursor: "pointer",
                   }}
+                  onClick={() => setCurrentPhoto((prev) => (prev + 1) % photos.length)}
                 />
+              </div>
+              {/* Photo indicators */}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.5rem",
+                  justifyContent: "center",
+                  marginTop: "1rem",
+                }}
+              >
+                {photos.map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: "50%",
+                      background: i === currentPhoto ? C.text : C.faint,
+                      cursor: "pointer",
+                      transition: "background 0.3s",
+                    }}
+                    onClick={() => setCurrentPhoto(i)}
+                  />
+                ))}
               </div>
             </div>
           </div>
@@ -1012,6 +1040,36 @@ export default function App() {
                 English — Intermediate &nbsp;·&nbsp; Russian — Native
               </p>
             </div>
+            {/* Telegram */}
+            <a
+              href="https://t.me/Ilya_vi"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="contact-item"
+              style={{ textDecoration: "none", display: "block" }}
+            >
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.65rem",
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: C.muted,
+                  marginBottom: "0.75rem",
+                }}
+              >
+                Telegram
+              </p>
+              <p
+                style={{
+                  fontFamily: font.mono,
+                  fontSize: "0.82rem",
+                  color: C.text,
+                }}
+              >
+                t.me/Ilya_vi
+              </p>
+            </a>
           </div>
           {/* CV Download */}
           <a
