@@ -179,8 +179,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openExp, setOpenExp] = useState<number>(0);
   const [copied, setCopied] = useState(false);
-  const [currentPhoto, setCurrentPhoto] = useState(0);
-  const photos = ['/photo.jpg', '/photo2.jpg'];
+  const photos = ['/photo.jpg'];
   const copyEmail = () => {
     navigator.clipboard.writeText("v.ashaev@yandex.com");
     setCopied(true);
@@ -262,7 +261,7 @@ export default function App() {
           </div>
           {/* Download CV */}
           <a
-            href="/cv.pdf"
+            href="/Ilya_Ashaev_CV.pdf"
             download="Ilya_Ashaev_CV.pdf"
             className="desktop-nav"
             style={{
@@ -346,7 +345,7 @@ export default function App() {
               </button>
             ))}
             <a
-              href="/cv.pdf"
+              href="/Ilya_Ashaev_CV.pdf"
               download="Ilya_Ashaev_CV.pdf"
               style={{
                 fontFamily: font.body,
@@ -588,7 +587,7 @@ export default function App() {
                 }}
               >
                 <img
-                  src={photos[currentPhoto]}
+                  src="/photo.jpg"
                   alt="Ilya Ashaev"
                   style={{
                     width: "100%",
@@ -596,34 +595,8 @@ export default function App() {
                     objectFit: "cover",
                     objectPosition: "center top",
                     display: "block",
-                    cursor: "pointer",
                   }}
-                  onClick={() => setCurrentPhoto((prev) => (prev + 1) % photos.length)}
                 />
-              </div>
-              {/* Photo indicators */}
-              <div
-                style={{
-                  display: "flex",
-                  gap: "0.5rem",
-                  justifyContent: "center",
-                  marginTop: "1rem",
-                }}
-              >
-                {photos.map((_, i) => (
-                  <div
-                    key={i}
-                    style={{
-                      width: 8,
-                      height: 8,
-                      borderRadius: "50%",
-                      background: i === currentPhoto ? C.text : C.faint,
-                      cursor: "pointer",
-                      transition: "background 0.3s",
-                    }}
-                    onClick={() => setCurrentPhoto(i)}
-                  />
-                ))}
               </div>
             </div>
           </div>
@@ -1073,7 +1046,7 @@ export default function App() {
           </div>
           {/* CV Download */}
           <a
-            href="/cv.pdf"
+            href="/Ilya_Ashaev_CV.pdf"
             download="Ilya_Ashaev_CV.pdf"
             className="dl-btn"
           >
