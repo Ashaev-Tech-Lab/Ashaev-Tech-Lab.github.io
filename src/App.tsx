@@ -937,7 +937,7 @@ export default function App() {
             </div>
             {/* LinkedIn */}
             <a
-              href="https://linkedin.com/in/ilyaashaev1998"
+              href="https://am.linkedin.com/in/ilya-ashaev1998"
               target="_blank"
               rel="noopener noreferrer"
               className="contact-item"
