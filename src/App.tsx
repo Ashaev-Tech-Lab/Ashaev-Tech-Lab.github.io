@@ -55,8 +55,8 @@ const SKILLS = [
 ];
 const STATS = [
   { value: "5+", label: "Years of Experience" },
-  { value: "30%", label: "Efficiency Gain" },
-  { value: "40%", label: "Latency Reduction" },
+  { value: "Armenia", label: "Contract Organization" },
+  { value: "Remote", label: "Worldwide" },
 ];
 /* ─────────────────────────── STYLES ─────────────────────────── */
 const C = {
@@ -463,7 +463,7 @@ export default function App() {
                   marginBottom: "1.4rem",
                 }}
               >
-                Senior Software Engineer
+                Senior Software Engineer / Data Engineer / Data Analyst
               </p>
               <p
                 style={{
