@@ -962,7 +962,7 @@ export default function App() {
                   color: C.text,
                 }}
               >
-                linkedin.com/in/ilyaashaev1998
+                https://am.linkedin.com/in/ilya-ashaev1998
               </p>
             </a>
             {/* Location */}
@@ -1010,7 +1010,7 @@ export default function App() {
                   color: C.text,
                 }}
               >
-                English — Intermediate &nbsp;·&nbsp; Russian — Native
+                English — Upper-intermediate (B2) &nbsp;·&nbsp; Russian — Native
               </p>
             </div>
             {/* Telegram */}
