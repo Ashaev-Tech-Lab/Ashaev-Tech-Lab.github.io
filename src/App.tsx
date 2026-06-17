@@ -38,7 +38,7 @@ const EXPERIENCE = [
 const SKILLS = [
   {
     label: "Backend Engineering",
-    items: ["Golang", "Python", "REST APIs", "Microservices", "gRPC"],
+    items: ["Golang", "Python", "REST APIs", "Microservices", "gRPC", "C"],
   },
   {
     label: "Data & Machine Learning",
